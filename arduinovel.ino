@@ -9,14 +9,13 @@
 
 // Controls
 #define DOWN(BTN) digitalRead(BTN)
-#define PRESSED(BTN) (digitalRead(BTN) && !prevPressed(BTN))
 #define A      2
 #define DLEFT  3
 #define DRIGHT 4
 
 // Sound
 #define BUZZER 6
-#define MAYA_VOICE 440*4
+#define MAY_VOICE 440*4
 
 // Fonts
 #define FONT_1 u8g2_font_5x7_mr
@@ -31,36 +30,15 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 // Dialog vars
 size_t dcursor = 0;
-int dcursor_x  = 0;
-int dcursor_y  = 0;
+int dcursor_x  = LINE_START_X;
+int dcursor_y  = LINE_START_Y;
 
 size_t dline_i = 0;
-
-struct {
-  bool a      : 1;
-  bool dleft  : 1;
-  bool dright : 1;
-  bool _      : 5;
-} prev_keys;
-
-void updatePrevKeys() {
-  prev_keys.a      = DOWN(A);
-  prev_keys.dleft  = DOWN(DLEFT);
-  prev_keys.dright = DOWN(DRIGHT);
-}
-
-bool prevPressed(int btn) {
-  switch (btn) {
-  case A:      return prev_keys.a;
-  case DLEFT:  return prev_keys.dleft;
-  case DRIGHT: return prev_keys.dright;
-  }
-}
 
 inline void drawGame() {
   u8g2.setDrawColor(1);
 
-  u8g2.drawXBM(0, 0, MAYA_W, MAYA_H, MAYA_BITS);
+  u8g2.drawXBM(0, 0, MAY_W, MAY_H, MAY_BITS);
 
   u8g2.drawLine(43, 31, 46, 25);
   u8g2.drawLine(43, 32, 46, 39);
@@ -80,23 +58,17 @@ inline void drawGame() {
 
 
 void drawDialog() {
-  int x = LINE_START_X;
-  int y = LINE_START_Y;
-
   UPDATE_LINE_BUFFER;
-  const char c = buff[dialog_cursor];
+  const char c = buff[dcursor];
 
   switch (c) {
-  case '\0':
-    return;
-    break;
   case '\n':
-    x = LINE_START_X;
-    y += LETTER_H;
+    dcursor_x = LINE_START_X;
+    dcursor_y += LETTER_H;
     break;
   default:
-    u8g2.drawGlyph(x, y, c);
-    x += LETTER_W;
+    u8g2.drawGlyph(dcursor_x, dcursor_y, c);
+    dcursor_x += LETTER_W;
     break;
   }
 }
@@ -105,22 +77,24 @@ void updateDialog() {
   UPDATE_LINE_BUFFER;
   
   // Input
-  if (PRESSED(A)) {
+  if (DOWN(A)) {
     // Próximo diálogo
-    if (dialog_cursor == strlen(buff)) {
+    if (dcursor == strlen(buff)) {
       clearDialog();
       dline_i++;
-      dialog_cursor = 0;
+      dcursor = 0;
+      dcursor_x = LINE_START_X;
+      dcursor_y = LINE_START_Y;
+
+      return; // Não atualiza
     // Ir ao fim do diálogo
-    } else {
-      dialog_cursor = strlen(buff);
     }
   }
 
   // Update
-  if (dialog_cursor < strlen(buff)) {
-    dialog_cursor++;
-    tone(BUZZER, MAYA_VOICE);
+  if (dcursor < strlen(buff)) {
+    dcursor++;
+    tone(BUZZER, MAY_VOICE);
     delay(10);
     noTone(BUZZER);
     delay(2);
@@ -146,8 +120,6 @@ void setup() {
 }
 
 void loop() {
-  updatePrevKeys();
-
   drawDialog();
   updateDialog();
 
