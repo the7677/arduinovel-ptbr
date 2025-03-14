@@ -1,29 +1,23 @@
-#include <avr/pgmspace.h>
-
 #ifndef DIALOG_LINES_H
 #define DIALOG_LINES_H
 
 #define MAX_STRLENGTH 64
 
-// Buffer das strings na memória flash representadas na RAM
-char dbuff[MAX_STRLENGTH];
+// Buffer das strings na RAM
+extern char dbuff[MAX_STRLENGTH];
 
-//                                                                                             v-- Limite, exceto por caracteres especiais com '\'
-const char LINE_00[] PROGMEM = "Ola, bom dia!";
-const char LINE_01[] PROGMEM = "Tudo bem? Como\nvoce esta?";
-const char LINE_02[] PROGMEM = "Ja ouvi falar\num pouco sobre\nvoce.";
-const char LINE_03[] PROGMEM = "Malditos ameri-\ncanos...";
-const char LINE_04[] PROGMEM = "Nao incluiram\nacento na tabe-\nla ascii.";
-const char LINE_05[] PROGMEM = "Por favor, nao\npule para o\nproximo dia-\nlogo.";
-const char LINE_06[] PROGMEM = "Esta querendo\nlevar um\nSIGSEGV na sua\ncara?";
-const char LINE_07[] PROGMEM = "/@#6 !!(0  ((\"\n  ?°    .     ";
-const char LINE_08[] PROGMEM = "Brincadeira!\nNenhum acesso e\ninvalido aqui\nno ATMEGA328P.";
-const char LINE_09[] PROGMEM = "O maximo que\npode acontecer\ne um cheirinho\nde queimado.";
-const char LINE_10[] PROGMEM = "void\\\n(*reset)() = 0;\nreset();";
+extern const char LINE_00[] PROGMEM;
+extern const char LINE_01[] PROGMEM;
+extern const char LINE_02[] PROGMEM;
+extern const char LINE_03[] PROGMEM;
+extern const char LINE_04[] PROGMEM;
+extern const char LINE_05[] PROGMEM;
+extern const char LINE_06[] PROGMEM;
+extern const char LINE_07[] PROGMEM;
+extern const char LINE_08[] PROGMEM;
+extern const char LINE_09[] PROGMEM;
+extern const char LINE_10[] PROGMEM;
 
-const char* const dlines[] PROGMEM = {
-    LINE_00, LINE_01, LINE_02, LINE_03, LINE_04, LINE_05, LINE_06, LINE_07, LINE_08,
-    LINE_09, LINE_10
-};
+extern const char* const dlines[] PROGMEM;
 
-#endif 
+#endif

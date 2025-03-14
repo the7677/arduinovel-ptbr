@@ -36,12 +36,6 @@
 #define UPDATE_DLINE strcpy_P(dbuff, (char*)pgm_read_word(&(dlines[dline_i])))
 #define DLINE_LEN strlen(dbuff)
 
-// Sprites
-#define SPRITE sbuff
-
-#define MAY_TO_BUFFER memcpy_P(sbuff, MAY_BITS, (MAY_W * MAY_H)/8)
-#define SPLASH_TO_BUFFER memcpy_P(sbuff, SPLASH_BITS, (SPLASH_W * SPLASH_H)/8)
-
 // Display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
@@ -55,7 +49,7 @@ size_t dline_i = 0;
 inline void drawGame() {
   u8g2.setDrawColor(1);
 
-  MAY_TO_BUFFER;
+  LOAD_MAY_SPRITE;
   u8g2.drawXBM(0, 0, MAY_W, MAY_H, SPRITE);
 
   u8g2.drawLine(43, 31, 46, 25);
@@ -92,10 +86,11 @@ inline void updateDialog() {
   if (DOWN(A) && dcursor == DLINE_LEN) {
     clearDialog();
     dline_i++;
-    UPDATE_DLINE;
     dcursor = 0;
     dcursor_x = LINE_START_X;
     dcursor_y = LINE_START_Y;
+
+    UPDATE_DLINE;
 
     return;
   // Ir ao fim do diálogo
@@ -123,9 +118,9 @@ void setup() {
   u8g2.setContrast(0);
   u8g2.setFont(FONT_1);
 
-  UPDATE_DLINE;
-
   drawGame();
+
+  UPDATE_DLINE;
 }
 
 void loop() {

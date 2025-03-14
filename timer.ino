@@ -1,6 +1,5 @@
 #include "timer.h"
 
-
 Timer::Timer(unsigned long duration) {
   this->duration = duration;
   this->count = 0;
