@@ -5,7 +5,6 @@
 
 // Arquivos internos
 #include "sprites.h"
-#include "timer.h"
 #include "dialog_lines.h"
 
 // Controles
@@ -25,85 +24,107 @@
 
 // Texto
 #define FONT_1 u8g2_font_5x7_mr
-#define FONT_2 u8g2_font_spleen5x8_mf
+#define FONT_2 u8g2_font_nokiafc22_tf
+
 #define LINE_START_X 50
 #define LINE_START_Y 20
 #define LETTER_W     5
 #define LETTER_H     8
 
-#define CURSOR_CHAR dbuff[dcursor]
-
-#define UPDATE_DLINE strcpy_P(dbuff, (char*)pgm_read_word(&(dlines[dline_i])))
-#define DLINE_LEN strlen(dbuff)
+#define CURSOR_CHAR dbuff[var_field.dcursor]
 
 // Display
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset = */ U8X8_PIN_NONE);
 
 // Diálogo
-size_t dcursor = 0;
-int8_t dcursor_x  = LINE_START_X;
-int8_t dcursor_y  = LINE_START_Y;
+#define UPDATE_DLINE strcpy_P(dbuff, (char*)pgm_read_word(&(dlines[var_field.dline_i])))
+#define DLINE_LEN strlen(dbuff)
 
-size_t dline_i = 0;
+enum Mode : int8_t {STARTPAGE, GAME};
 
-inline void drawGame() {
+// Gambiarrinha para economizar RAM
+struct {
+  uint8_t dcursor    :6;//: 6  ;
+  uint8_t dcursor_x  ;//: 7  ;
+  uint8_t dcursor_y  ;//: 6  ;
+  uint8_t dline_i    ;//: 11 ;
+  uint8_t selected   ;//: 1  ;
+  Mode    mode       ;//: 1  ;
+} var_field = {0, LINE_START_X, LINE_START_Y, 0, 0, STARTPAGE};
+
+void drawStart() {
+  u8g2.setDrawColor(0);
+
+  u8g2.clearBuffer();
+
   u8g2.setDrawColor(1);
 
-  LOAD_MAY_SPRITE;
-  u8g2.drawXBM(0, 0, MAY_W, MAY_H, SPRITE);
+  drawSprite((128-SPLASH_W)/2, 4, SPLASH_W, SPLASH_H, SPLASH_SPRITE);
+
+  u8g2.setFont(FONT_2);
+  u8g2.drawStr(42, 60, "> iniciar");
+}
+
+void updateStart() {
+  if (DOWN(A)) {
+    u8g2.setFont(FONT_1);
+    drawMayAndBox();
+    var_field.mode = GAME;
+  }
+}
+
+void drawMayAndBox() {
+  u8g2.setDrawColor(0);
+
+  u8g2.clearBuffer();
+
+  u8g2.setDrawColor(1);
+
+  drawSprite(0, 0, MAY_W, MAY_H, MAY_SPRITE);
 
   u8g2.drawLine(43, 31, 46, 25);
   u8g2.drawLine(43, 32, 46, 39);
-  u8g2.drawFrame(47, 2, 79, 60);
-
-  u8g2.setDrawColor(0);
-
-  u8g2.drawLine(47, 25, 47, 39);
-  u8g2.drawPixel(47, 2);
-  u8g2.drawPixel(47, 61);
-  u8g2.drawPixel(125, 2);
-  u8g2.drawPixel(125, 61);
-
-  u8g2.setDrawColor(1);
+  u8g2.drawLine(47, 3, 47, 24);
+  u8g2.drawLine(47, 39, 47, 60);
+  u8g2.drawLine(48, 2, 124, 2);
+  u8g2.drawLine(48, 61, 124, 61);
+  u8g2.drawLine(125, 3, 125, 60);
 }
 
-inline void drawDialog() {
+void drawDialog() {
+  // Draw
   switch (CURSOR_CHAR) {
   case '\n':
-    dcursor_x = LINE_START_X;
-    dcursor_y += LETTER_H;
+    var_field.dcursor_x = LINE_START_X;
+    var_field.dcursor_y += LETTER_H;
     break;
   default:
-    u8g2.drawGlyph(dcursor_x, dcursor_y, CURSOR_CHAR);
-    dcursor_x += LETTER_W;
+    u8g2.drawGlyph(var_field.dcursor_x, var_field.dcursor_y, CURSOR_CHAR);
+    var_field.dcursor_x += LETTER_W;
     break;
   }
 }
 
-inline void updateDialog() {
-  // Input
-  // Próximo diálogo
-  if (DOWN(A) && dcursor == DLINE_LEN) {
+void updateDialog() {
+  if (DOWN(A) && var_field.dcursor == DLINE_LEN) {
     clearDialog();
-    dline_i++;
-    dcursor = 0;
-    dcursor_x = LINE_START_X;
-    dcursor_y = LINE_START_Y;
+    var_field.dline_i++;
+    var_field.dcursor = 0;
+    var_field.dcursor_x = LINE_START_X;
+    var_field.dcursor_y = LINE_START_Y;
 
     UPDATE_DLINE;
 
     return;
-  // Ir ao fim do diálogo
   }
 
-  // Update
-  if (dcursor < DLINE_LEN) {
-    dcursor++;
+  if (var_field.dcursor < DLINE_LEN) {
+    var_field.dcursor++;
     PLAY_VOICE(BUZZER_1, MAY_VOICE, MAY_VOICE_MS, MAY_VOICE_PAUSE);
   }
 }
 
-inline void clearDialog() {
+void clearDialog() {
   u8g2.setDrawColor(0);
   u8g2.drawBox(48, 3, 77, 58);
   u8g2.setDrawColor(1);
@@ -118,14 +139,21 @@ void setup() {
   u8g2.setContrast(0);
   u8g2.setFont(FONT_1);
 
-  drawGame();
-
   UPDATE_DLINE;
+
+  drawStart();
 }
 
 void loop() {
-  drawDialog();
-  updateDialog();
+  switch (var_field.mode) {
+  case STARTPAGE:
+    updateStart();
+    break;
+  case GAME:
+    drawDialog();
+    updateDialog();
+    break;
+  }
 
   u8g2.sendBuffer();
 }

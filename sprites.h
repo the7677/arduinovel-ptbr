@@ -3,22 +3,21 @@
 #ifndef SPRITES_H
 #define SPRITES_H
 
-#define MAX_SPRITE_SIZE (64*40) /* bits */ / 8 /* -> bytes */
-// * O importante é a quantidade de pixels ser menor ou igual ao produto de 64x40
+// Buffer para um pixel por vez do sprite na RAM
+extern char pixel_buff;
 
-#define SPRITE sbuff
-
-// Buffer dos sprites na memória flash representadas na RAM
-extern char sbuff[MAX_SPRITE_SIZE];
+// Sprites
 
 #define MAY_W 40
 #define MAY_H 64
-#define LOAD_MAY_SPRITE memcpy_P(sbuff, MAY_BITS, (MAY_W * MAY_H)/8)
-extern const char MAY_BITS[] PROGMEM;
+extern const char MAY_SPRITE[] PROGMEM;
 
 #define SPLASH_W 64
 #define SPLASH_H 40
-#define LOAD_SPLASH_SPRITE memcpy_P(sbuff, SPLASH_BITS, (SPLASH_W * SPLASH_H)/8)
-extern const char SPLASH_BITS[] PROGMEM;
+extern const char SPLASH_SPRITE[] PROGMEM;
+
+// Função para carregar sprites com menos memória, largura precisa ser par
+// Corta sprite em secções verticais, precisando alocar menos RAM
+void drawSprite(int x, int y, int width, int height, const char *sprite);
 
 #endif
