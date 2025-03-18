@@ -32,6 +32,7 @@
 #define LETTER_H     8
 
 #define CURSOR_CHAR dbuff[var_field.dcursor]
+#define NEX_CURSOR_CHAR dbuff[var_field.dcursor+1]
 
 // Display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset = */ U8X8_PIN_NONE);
@@ -40,17 +41,18 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset = */ U8X8_PIN_NONE);
 #define UPDATE_DLINE strcpy_P(dbuff, (char*)pgm_read_word(&(dlines[var_field.dline_i])))
 #define DLINE_LEN strlen(dbuff)
 
-enum Mode : int8_t {STARTPAGE, GAME};
+enum Mode : uint8_t {STARTPAGE, GAME};
 
 // Gambiarrinha para economizar RAM
 struct {
-  uint8_t dcursor    :6;//: 6  ;
-  uint8_t dcursor_x  ;//: 7  ;
-  uint8_t dcursor_y  ;//: 6  ;
-  uint8_t dline_i    ;//: 11 ;
-  uint8_t selected   ;//: 1  ;
-  Mode    mode       ;//: 1  ;
-} var_field = {0, LINE_START_X, LINE_START_Y, 0, 0, STARTPAGE};
+  uint8_t draw_color ;: 1  ;
+  uint8_t dcursor    ;: 6  ;
+  uint8_t dcursor_x  ;: 7  ;
+  uint8_t dcursor_y  ;: 6  ;
+  uint8_t dline_i    ;: 10 ;
+  uint8_t selected   ;: 1  ;
+  Mode    mode       ;: 1  ;
+} var_field = {1, 0, LINE_START_X, LINE_START_Y, 0, 0, STARTPAGE};
 
 void drawStart() {
   u8g2.setDrawColor(0);
@@ -94,11 +96,20 @@ void drawMayAndBox() {
 void drawDialog() {
   // Draw
   switch (CURSOR_CHAR) {
-  case '\n':
+  case '*': // Negrito
+    if (NEX_CURSOR_CHAR == '*') {
+      var_field.dcursor++;
+      goto print_char;
+    }
+    var_field.draw_color = !var_field.draw_color;
+    u8g2.setDrawColor(var_field.draw_color);
+    break;
+  case '\n': // Line break
     var_field.dcursor_x = LINE_START_X;
     var_field.dcursor_y += LETTER_H;
     break;
-  default:
+  default: // Char print
+  print_char:
     u8g2.drawGlyph(var_field.dcursor_x, var_field.dcursor_y, CURSOR_CHAR);
     var_field.dcursor_x += LETTER_W;
     break;
