@@ -117,22 +117,21 @@ void drawDialog() {
 }
 
 void updateDialog() {
-  if (DOWN(A) && var_field.dcursor == DLINE_LEN) {
+  if (var_field.dcursor < DLINE_LEN) {
+    var_field.dcursor++;
+    PLAY_VOICE(BUZZER_1, MAY_VOICE, MAY_VOICE_MS, MAY_VOICE_PAUSE);
+  }
+
+  if (var_field.dcursor == DLINE_LEN && ( DOWN(A) || (DOWN(DLEFT) && var_field.dline_i > 0) )) {
+    var_field.dline_i += (DOWN(A)) ? 1 : -1;
+
     clearDialog();
-    var_field.dline_i++;
     var_field.dcursor = 0;
     var_field.dcursor_x = LINE_START_X;
     var_field.dcursor_y = LINE_START_Y;
 
     UPDATE_DLINE;
-
-    return;
-  }
-
-  if (var_field.dcursor < DLINE_LEN) {
-    var_field.dcursor++;
-    PLAY_VOICE(BUZZER_1, MAY_VOICE, MAY_VOICE_MS, MAY_VOICE_PAUSE);
-  }
+}
 }
 
 void clearDialog() {
