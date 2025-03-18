@@ -3,9 +3,6 @@
 #ifndef SPRITES_H
 #define SPRITES_H
 
-// Buffer para um pixel por vez do sprite na RAM
-extern char pixel_buff;
-
 // Sprites
 
 #define MAY_W 40
