@@ -86,11 +86,11 @@ void drawMayAndBox() {
 
   u8g2.drawLine(43, 31, 46, 25);
   u8g2.drawLine(43, 32, 46, 39);
-  u8g2.drawLine(47, 3, 47, 24);
-  u8g2.drawLine(47, 39, 47, 60);
-  u8g2.drawLine(48, 2, 124, 2);
-  u8g2.drawLine(48, 61, 124, 61);
-  u8g2.drawLine(125, 3, 125, 60);
+  u8g2.drawVLine(47, 3, 22);
+  u8g2.drawVLine(47, 40, 22);
+  u8g2.drawHLine(48, 2, 77);
+  u8g2.drawHLine(48, 61, 77);
+  u8g2.drawVLine(125, 3, 58);
 }
 
 void drawDialog() {
