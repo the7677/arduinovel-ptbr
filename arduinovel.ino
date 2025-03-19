@@ -23,7 +23,7 @@
 #define PLAY_VOICE(BUZZER, VOICE, MS, PAUSE) tone(BUZZER, VOICE); delay(MS); noTone(BUZZER); delay(PAUSE)
 
 // Texto
-#define FONT_1 u8g2_font_5x7_mr
+#define FONT_1 u8g2_font_5x7_mf
 #define FONT_2 u8g2_font_nokiafc22_tf
 
 #define LINE_START_X 50
