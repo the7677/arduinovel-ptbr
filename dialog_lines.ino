@@ -21,9 +21,11 @@ const unsigned char LINE_09[] PROGMEM = "Está querendo\nlevar um\nSIGSEGV na sua
 const unsigned char LINE_10[] PROGMEM = "/@#6 !!(0  ((\"\n  ?Â° * *  . ?   ";
 const unsigned char LINE_11[] PROGMEM = "Brincadeira!\nNenhum acesso é\ninvalido aqui\nno ATMEGA328P.";
 const unsigned char LINE_12[] PROGMEM = "O máximo que\npode acontecer\né um cheirinho\nde queimado.";
-const unsigned char LINE_13[] PROGMEM = "void\\\n(**reset)() = 0;\nreset();";
+const unsigned char LINE_13[] PROGMEM = "Mas é sério,\n a memória está\nacabando.";
+const unsigned char LINE_14[] PROGMEM = "\"The fog is\n coming.\"";
+const unsigned char LINE_15[] PROGMEM = "void\\\n(**reset)() = 0;\nreset();";
 
 const unsigned char* const dlines[] PROGMEM = {
     LINE_00, LINE_01, LINE_02, LINE_03, LINE_04, LINE_05, LINE_06, LINE_07, LINE_08,
-    LINE_09, LINE_10, LINE_11, LINE_12, LINE_13
+    LINE_09, LINE_10, LINE_11, LINE_12, LINE_13, LINE_14, LINE_15
 };
