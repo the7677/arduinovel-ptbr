@@ -95,6 +95,21 @@ void drawMayAndBox() {
   u8g2.drawVLine(125, 3, 58);
 }
 
+void handleEvents() {
+  const unsigned char *sprite;
+
+  switch (devents[var_field.dline_i].expression) {
+  case SMILE:    sprite = EXPRESSION_SMILE;    break;
+  case HAPPY:    sprite = EXPRESSION_HAPPY;    break;
+  case SERIOUS:  sprite = EXPRESSION_SERIOUS;  break;
+  case SAD:      sprite = EXPRESSION_SAD;      break;
+  case CONFUSED: sprite = EXPRESSION_CONFUSED; break;
+  case SOMEONE:  sprite = EXPRESSION_SOMEONE;  break;
+  }
+
+  drawSprite(EXPRESSION_X, EXPRESSION_Y, EXPRESSION_W, EXPRESSION_H, sprite);
+}
+
 void drawDialog() {
   // Draw
   switch (CURSOR_CHAR) {
@@ -162,6 +177,7 @@ void loop() {
     updateStart();
     break;
   case GAME:
+    handleEvents();
     drawDialog();
     updateDialog();
     break;

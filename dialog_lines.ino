@@ -26,6 +26,11 @@ const unsigned char LINE_14[] PROGMEM = "\"The fog is\ncoming.\"";
 const unsigned char LINE_15[] PROGMEM = "void\\\n(**reset)() = 0;\nreset();";
 
 const unsigned char* const dlines[] PROGMEM = {
-    LINE_00, LINE_01, LINE_02, LINE_03, LINE_04, LINE_05, LINE_06, LINE_07, LINE_08,
-    LINE_09, LINE_10, LINE_11, LINE_12, LINE_13, LINE_14, LINE_15
+    LINE_00, LINE_01, LINE_02, LINE_03, LINE_04, LINE_05, LINE_06, LINE_07,
+    LINE_08, LINE_09, LINE_10, LINE_11, LINE_12, LINE_13, LINE_14, LINE_15,
+};
+
+const Event devents[] = {
+    {SMILE}, {SMILE}, {SERIOUS}, {SAD}, {HAPPY}, {SMILE}, {SERIOUS}, {SERIOUS},
+    {SAD}, {SAD}, {CONFUSED}, {HAPPY}, {SMILE}, {SERIOUS}, {CONFUSED}, {SOMEONE}
 };
