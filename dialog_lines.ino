@@ -8,7 +8,7 @@ unsigned char dbuff[MAX_STRLENGTH];
 // '*' inverte a cor (negrito). Usar '**' para ignorar.
 // // O modo negrito interrompe ao mudar de linha, e '*' continua ocupando 1 caractere na memória.
 //                                                                                             v-- Limite, exceto por caracteres especiais com '\'
-const unsigned char LINE_00[] PROGMEM = "*Ola, bom dia!";
+const unsigned char LINE_00[] PROGMEM = "Ola, bom dia!";
 const unsigned char LINE_01[] PROGMEM = "Tudo bem? Como\nvoce esta?";
 const unsigned char LINE_02[] PROGMEM = "Malditos ameri-\ncanos...";
 const unsigned char LINE_03[] PROGMEM = "Nao incluiram\nacento na tabe-\nla ascii.";
@@ -18,7 +18,7 @@ const unsigned char LINE_06[] PROGMEM = "...";
 const unsigned char LINE_07[] PROGMEM = "Por favor, não\npule para o\npróximo diálo-\ngo.";
 const unsigned char LINE_08[] PROGMEM = "O espaço na me-\nmória está\nacabando...";
 const unsigned char LINE_09[] PROGMEM = "Está querendo\nlevar um\nSIGSEGV na sua\ncara?";
-const unsigned char LINE_10[] PROGMEM = "/@#6 !!(0  ((\"\n  ?Â° * *  . ?   ";
+const unsigned char LINE_10[] PROGMEM = "/@#6 !!(0  ((\"\n  ?° * *  . ?   ";
 const unsigned char LINE_11[] PROGMEM = "Brincadeira!\nNenhum acesso é\ninvalido aqui\nno ATMEGA328P.";
 const unsigned char LINE_12[] PROGMEM = "O máximo que\npode acontecer\né um cheirinho\nde queimado.";
 const unsigned char LINE_13[] PROGMEM = "Mas é sério,\na memória está\nacabando.";

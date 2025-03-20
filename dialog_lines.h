@@ -17,6 +17,11 @@ extern const unsigned char LINE_07[] PROGMEM;
 extern const unsigned char LINE_08[] PROGMEM;
 extern const unsigned char LINE_09[] PROGMEM;
 extern const unsigned char LINE_10[] PROGMEM;
+extern const unsigned char LINE_11[] PROGMEM;
+extern const unsigned char LINE_12[] PROGMEM;
+extern const unsigned char LINE_13[] PROGMEM;
+extern const unsigned char LINE_14[] PROGMEM;
+extern const unsigned char LINE_15[] PROGMEM;
 
 extern const unsigned char* const dlines[] PROGMEM;
 
