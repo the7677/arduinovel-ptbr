@@ -43,19 +43,19 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset = */ U8X8_PIN_NONE);
     
 3. Adicione permissões e execute o script
 
-    - Linux
+- Linux
+
+    Execute os seguintes comandos dentro da pasta para adicionar permissões
+    de execução e executar o arquivo de build:
+
+    ``` bash
+    cd arduinovel/
+    chmod +x build.sh
+    ./build.sh
+    ```
+    *Certifique-se de que o nome da pasta foi renomeado para 'arduinovel',
+    seguindo a etapa 2.
     
-        Execute os seguintes comandos dentro da pasta para adicionar permissões
-        de execução e executar o arquivo de build:
-    
-        ``` bash
-        cd arduinovel/
-        chmod +x build.sh
-        ./build.sh
-        ```
-        *Certifique-se de que o nome da pasta foi renomeado para 'arduinovel',
-        seguindo a etapa 2.
-        
-    - Windows
-    
-        Em breve...
+- Windows
+
+    Em breve...

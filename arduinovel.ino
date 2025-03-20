@@ -98,18 +98,18 @@ void drawMayAndBox() {
 void drawDialog() {
   // Draw
   switch (CURSOR_CHAR) {
-  case '*': // Negrito
-    if (NEX_CURSOR_CHAR == '*') {
-      var_field.dcursor++;
-      goto print_char;
-    }
-    var_field.draw_color = !var_field.draw_color;
-    u8g2.setDrawColor(var_field.draw_color);
-    break;
   case '\n': // Line break
     var_field.dcursor_x = LINE_START_X;
     var_field.dcursor_y += LETTER_H;
     break;
+  case '*': // Negrito
+    if (NEX_CURSOR_CHAR != '*') {
+      var_field.draw_color = !var_field.draw_color;
+      u8g2.setDrawColor(var_field.draw_color);
+    }
+
+    var_field.dcursor++;
+    // falltrough
   default: // Char print
   print_char:
     u8g2.drawGlyph(var_field.dcursor_x, var_field.dcursor_y, CURSOR_CHAR);
@@ -133,7 +133,7 @@ void updateDialog() {
     var_field.dcursor_y = LINE_START_Y;
 
     UPDATE_DLINE;
-}
+  }
 }
 
 void clearDialog() {
