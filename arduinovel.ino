@@ -89,25 +89,14 @@ void drawMayAndBox() {
   u8g2.drawLine(43, 31, 46, 25);
   u8g2.drawLine(43, 32, 46, 39);
   u8g2.drawVLine(47, 3, 22);
-  u8g2.drawVLine(47, 40, 22);
+  u8g2.drawVLine(47, 40, 21);
   u8g2.drawHLine(48, 2, 77);
   u8g2.drawHLine(48, 61, 77);
   u8g2.drawVLine(125, 3, 58);
 }
 
 void handleEvents() {
-  const unsigned char *sprite;
-
-  switch (devents[var_field.dline_i].expression) {
-  case SMILE:    sprite = EXPRESSION_SMILE;    break;
-  case HAPPY:    sprite = EXPRESSION_HAPPY;    break;
-  case SERIOUS:  sprite = EXPRESSION_SERIOUS;  break;
-  case SAD:      sprite = EXPRESSION_SAD;      break;
-  case CONFUSED: sprite = EXPRESSION_CONFUSED; break;
-  case SOMEONE:  sprite = EXPRESSION_SOMEONE;  break;
-  }
-
-  drawSprite(EXPRESSION_X, EXPRESSION_Y, EXPRESSION_W, EXPRESSION_H, sprite);
+  drawSprite(EXPRESSION_X, EXPRESSION_Y, EXPRESSION_W, EXPRESSION_H, devents[var_field.dline_i].expression_sprite);
 }
 
 void drawDialog() {
@@ -139,15 +128,26 @@ void updateDialog() {
     PLAY_VOICE(BUZZER_1, MAY_VOICE, MAY_VOICE_MS, MAY_VOICE_PAUSE);
   }
 
-  if (var_field.dcursor == DLINE_LEN && ( DOWN(A) || (DOWN(DLEFT) && var_field.dline_i > 0) )) {
-    var_field.dline_i += (DOWN(A)) ? 1 : -1;
+  if (var_field.dcursor == DLINE_LEN) {
+    if (DOWN(A) || DOWN(DRIGHT)) {
+      var_field.dline_i++;
+      goto reset;
+    }
 
-    clearDialog();
-    var_field.dcursor = 0;
-    var_field.dcursor_x = LINE_START_X;
-    var_field.dcursor_y = LINE_START_Y;
+    if (DOWN(DLEFT) && var_field.dline_i > 0) {
+      var_field.dline_i--;
+      goto reset;
+    }
 
-    UPDATE_DLINE;
+    return;
+
+    reset:
+      clearDialog();
+      var_field.dcursor = 0;
+      var_field.dcursor_x = LINE_START_X;
+      var_field.dcursor_y = LINE_START_Y;
+
+      UPDATE_DLINE;
   }
 }
 

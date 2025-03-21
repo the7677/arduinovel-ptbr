@@ -35,7 +35,7 @@ enum Expression {
 };
 
 struct Event {
-    Expression expression;
+    const char *expression_sprite;
 };
 
 extern const Event devents[];
