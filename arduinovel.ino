@@ -6,8 +6,9 @@
 #include <stdlib.h>
 
 // Arquivos internos
-#include "sprites.h"
+#include "events.h"
 #include "dialog_lines.h"
+#include "sprites.h"
 
 // Controles
 #define DOWN(BTN) digitalRead(BTN)

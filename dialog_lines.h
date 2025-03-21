@@ -25,19 +25,4 @@ extern const unsigned char LINE_15[] PROGMEM;
 
 extern const unsigned char* const dlines[] PROGMEM;
 
-enum Expression {
-    SMILE,
-    HAPPY,
-    SERIOUS,
-    SAD,
-    CONFUSED,
-    SOMEONE
-};
-
-struct Event {
-    const char *expression_sprite;
-};
-
-extern const Event devents[];
-
 #endif
