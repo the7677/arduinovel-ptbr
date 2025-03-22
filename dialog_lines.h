@@ -1,11 +1,6 @@
 #ifndef DIALOG_LINES_H
 #define DIALOG_LINES_H
 
-#define MAX_STRLENGTH 64
-
-// Buffer das strings na RAM
-extern unsigned char dbuff[MAX_STRLENGTH];
-
 extern const unsigned char LINE_00[] PROGMEM;
 extern const unsigned char LINE_01[] PROGMEM;
 extern const unsigned char LINE_02[] PROGMEM;

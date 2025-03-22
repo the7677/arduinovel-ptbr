@@ -1,4 +1,4 @@
-// v0.13
+// v0.15
 
 // Libs
 #include <U8g2lib.h>
@@ -23,7 +23,11 @@
 #define MAY_VOICE_MS 10
 #define MAY_VOICE_PAUSE 2
 
-#define PLAY_VOICE(BUZZER, VOICE, MS, PAUSE) tone(BUZZER, VOICE); delay(MS); noTone(BUZZER); delay(PAUSE)
+#define CHOICE_SOUND 440 * 6
+#define CHOICE_MS 20
+#define CHOICE_PAUSE 100
+
+#define PLAY_SOUND(BUZZER, SOUND, MS, PAUSE) tone(BUZZER, SOUND); delay(MS); noTone(BUZZER); delay(PAUSE)
 
 // Texto
 #define FONT_1 u8g2_font_5x7_mf
@@ -34,28 +38,36 @@
 #define LETTER_W     5
 #define LETTER_H     8
 
-#define CURSOR_CHAR dbuff[var_field.dcursor]
-#define NEX_CURSOR_CHAR dbuff[var_field.dcursor+1]
+#define CHOICE_X     50
+#define CHOICE_ONE_Y 50
+#define CHOICE_TWO_Y CHOICE_ONE_Y + LETTER_H
+
+#define CURSOR_CHAR strbuff[vars.dcursor]
+#define NEX_CURSOR_CHAR strbuff[vars.dcursor+1]
 
 // Display
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset = */ U8X8_PIN_NONE);
 
-// Diálogo
-#define UPDATE_DLINE strcpy_P(dbuff, (char*)pgm_read_word(&(dlines[var_field.dline_i])))
-#define DLINE_LEN strlen(dbuff)
+// Diálogo e Escolhas
+#define DLINE_TO_BUFF strcpy_P(strbuff, (char*)pgm_read_word(&(dlines[vars.dline_i])))
+#define DLINE_LEN strlen(strbuff)
 
-enum Mode : uint8_t {STARTPAGE, GAME};
+// Buffer das strings na RAM
+#define MAX_STRLENGTH 64
+unsigned char strbuff[MAX_STRLENGTH];
+
+enum Mode : uint8_t {STARTPAGE, DIALOG, CHOICE};
 
 // Gambiarrinha para economizar RAM
 struct {
-  uint8_t draw_color ;: 1  ;
-  uint8_t dcursor    ;: 6  ;
-  uint8_t dcursor_x  ;: 7  ;
-  uint8_t dcursor_y  ;: 6  ;
-  uint8_t dline_i    ;: 10 ;
-  uint8_t selected   ;: 1  ;
-  Mode    mode       ;: 1  ;
-} var_field = {1, 0, LINE_START_X, LINE_START_Y, 0, 0, STARTPAGE};
+  uint8_t draw_color : 1  ;
+  uint8_t dcursor    : 6  ;
+  uint8_t dcursor_x  : 7  ;
+  uint8_t dcursor_y  : 6  ;
+  uint8_t dline_i    : 16 ;
+  uint8_t selected   : 1  ;
+  Mode    mode       : 3  ;
+} vars = {1, 0, LINE_START_X, LINE_START_Y, 0, 0, STARTPAGE};
 
 void drawStart() {
   u8g2.setDrawColor(0);
@@ -74,7 +86,7 @@ void updateStart() {
   if (DOWN(A)) {
     u8g2.setFont(FONT_1);
     drawMayAndBox();
-    var_field.mode = GAME;
+    vars.mode = DIALOG;
   }
 }
 
@@ -97,58 +109,64 @@ void drawMayAndBox() {
 }
 
 void handleEvents() {
-  drawSprite(EXPRESSION_X, EXPRESSION_Y, EXPRESSION_W, EXPRESSION_H, devents[var_field.dline_i].expression_sprite);
+  drawSprite(EXPRESSION_X, EXPRESSION_Y, EXPRESSION_W, EXPRESSION_H, devents[vars.dline_i].expression_sprite);
+
+  switch (vars.dline_i) {
+  case 1:
+    if (vars.dcursor == DLINE_LEN) vars.mode = CHOICE;
+    break;
+  }
 }
 
 void drawDialog() {
   // Draw
   switch (CURSOR_CHAR) {
   case '\n': // Line break
-    var_field.dcursor_x = LINE_START_X;
-    var_field.dcursor_y += LETTER_H;
+    vars.dcursor_x = LINE_START_X;
+    vars.dcursor_y += LETTER_H;
     break;
   case '*': // Negrito
     if (NEX_CURSOR_CHAR != '*') {
-      var_field.draw_color = !var_field.draw_color;
-      u8g2.setDrawColor(var_field.draw_color);
+      vars.draw_color = !vars.draw_color;
+      u8g2.setDrawColor(vars.draw_color);
     }
 
-    var_field.dcursor++;
+    vars.dcursor++;
     // falltrough
   default: // Char print
   print_char:
-    u8g2.drawGlyph(var_field.dcursor_x, var_field.dcursor_y, CURSOR_CHAR);
-    var_field.dcursor_x += LETTER_W;
+    u8g2.drawGlyph(vars.dcursor_x, vars.dcursor_y, CURSOR_CHAR);
+    vars.dcursor_x += LETTER_W;
     break;
   }
 }
 
 void updateDialog() {
-  if (var_field.dcursor < DLINE_LEN) {
-    var_field.dcursor++;
-    PLAY_VOICE(BUZZER_1, MAY_VOICE, MAY_VOICE_MS, MAY_VOICE_PAUSE);
+  if (vars.dcursor < DLINE_LEN) {
+    vars.dcursor++;
+    PLAY_SOUND(BUZZER_1, MAY_VOICE, MAY_VOICE_MS, MAY_VOICE_PAUSE);
   }
 
-  if (var_field.dcursor == DLINE_LEN) {
+  if (vars.dcursor == DLINE_LEN) {
     if (DOWN(A) || DOWN(DRIGHT)) {
-      var_field.dline_i++;
-      goto reset;
+      vars.dline_i++;
+      goto clear;
     }
 
-    if (DOWN(DLEFT) && var_field.dline_i > 0) {
-      var_field.dline_i--;
-      goto reset;
+    if (DOWN(DLEFT) && vars.dline_i > 0) {
+      vars.dline_i--;
+      goto clear;
     }
 
     return;
 
-    reset:
+    clear:
       clearDialog();
-      var_field.dcursor = 0;
-      var_field.dcursor_x = LINE_START_X;
-      var_field.dcursor_y = LINE_START_Y;
+      vars.dcursor = 0;
+      vars.dcursor_x = LINE_START_X;
+      vars.dcursor_y = LINE_START_Y;
 
-      UPDATE_DLINE;
+      DLINE_TO_BUFF;
   }
 }
 
@@ -156,6 +174,46 @@ void clearDialog() {
   u8g2.setDrawColor(0);
   u8g2.drawBox(48, 3, 77, 58);
   u8g2.setDrawColor(1);
+}
+
+void drawChoice() {
+  u8g2.setDrawColor(0);
+  u8g2.drawBox(CHOICE_X, CHOICE_ONE_Y - LETTER_H, LETTER_W, LETTER_H * 2);
+  u8g2.setDrawColor(1);
+
+  switch (vars.selected) {
+  case 0:
+    u8g2.drawGlyph(CHOICE_X, CHOICE_ONE_Y, '>');
+    break;
+  case 1:
+    u8g2.drawGlyph(CHOICE_X, CHOICE_TWO_Y, '>');
+    break;
+  }
+
+  u8g2.setDrawColor(1);
+
+  u8g2.drawUTF8(CHOICE_X + LETTER_W * 2, CHOICE_ONE_Y, devents[vars.dline_i].choice->one);
+  u8g2.drawUTF8(CHOICE_X + LETTER_W * 2, CHOICE_TWO_Y, devents[vars.dline_i].choice->two);
+}
+
+void updateChoice() {
+  if (DOWN(DLEFT) || DOWN(DRIGHT)) {
+    vars.selected = !vars.selected;
+    PLAY_SOUND(BUZZER_1, CHOICE_SOUND, CHOICE_MS, CHOICE_PAUSE);
+  }
+
+  if (DOWN(A)) {
+    vars.mode = DIALOG;
+
+    vars.dline_i++;
+
+    clearDialog();
+    vars.dcursor = 0;
+    vars.dcursor_x = LINE_START_X;
+    vars.dcursor_y = LINE_START_Y;
+
+    DLINE_TO_BUFF;
+  }
 }
 
 void setup() {
@@ -167,20 +225,24 @@ void setup() {
   u8g2.setContrast(0);
   u8g2.setFont(FONT_1);
 
-  UPDATE_DLINE;
+  DLINE_TO_BUFF;
 
   drawStart();
 }
 
 void loop() {
-  switch (var_field.mode) {
+  switch (vars.mode) {
   case STARTPAGE:
     updateStart();
     break;
-  case GAME:
+  case DIALOG:
     handleEvents();
     drawDialog();
     updateDialog();
+    break;
+  case CHOICE:
+    drawChoice();
+    updateChoice();
     break;
   }
 

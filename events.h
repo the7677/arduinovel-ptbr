@@ -1,3 +1,5 @@
+#include "choices.h"
+
 #ifndef EVENTS_H
 #define EVENTS_H
 
@@ -12,6 +14,7 @@ enum Expression {
 
 struct Event {
     const char *expression_sprite;
+    const Choice *choice;
 };
 
 extern const Event devents[];

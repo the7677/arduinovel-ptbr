@@ -1,9 +1,7 @@
 #include <avr/pgmspace.h>
 
 // Importante: A codificação deste arquivo precisa estar em ISO 8859-1 para uma leitura correta.
-
-// Buffer das strings na memória flash representadas na RAM
-unsigned char dbuff[MAX_STRLENGTH];
+// [ç] <- A letra deve aparecer perfeitamente.
 
 // '*' inverte a cor (negrito). Usar '**' para ignorar.
 // // O modo negrito interrompe ao mudar de linha, e '*' continua ocupando 1 caractere na memória.
