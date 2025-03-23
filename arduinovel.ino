@@ -1,4 +1,4 @@
-// v0.15
+// v0.16
 
 // Libs
 #include <U8g2lib.h>
@@ -159,7 +159,7 @@ void updateDialog() {
       goto clear;
     }
 
-    if (DOWN(DLEFT) && vars.dline_i > 0) {
+    if (DOWN(DLEFT) && vars.dline_i > 0 && devents[vars.dline_i-1].choice == NO_CHOICE) {
       vars.dline_i--;
       goto clear;
     }
