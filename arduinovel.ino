@@ -11,13 +11,16 @@
 #include "sprites.h"
 
 // Controles
-#define DOWN(BTN) digitalRead(BTN)
-#define A      2
-#define DLEFT  3
-#define DRIGHT 4
+#define BTN(PIN) digitalRead(PIN)
+#define UP    2
+#define DOWN  3
+#define LEFT  4
+#define RIGHT 5
+#define A     6
+#define B     7
 
 // Som
-#define BUZZER_1 6
+#define BUZZER_1 8
 
 #define MAY_VOICE 440 * 4 + (rand() % 76 /* número da sorte*/)
 #define MAY_VOICE_MS 10
@@ -84,7 +87,7 @@ void drawStart() {
 }
 
 void updateStart() {
-  if (DOWN(A)) {
+  if (BTN(A)) {
     u8g2.setFont(FONT_1);
     drawMayAndBox();
     vars.mode = DIALOG;
@@ -136,11 +139,9 @@ void drawDialog() {
       vars.draw_color = !vars.draw_color;
       u8g2.setDrawColor(vars.draw_color);
     }
-
     vars.dcursor++;
     // falltrough
   default: // Char print
-  print_char:
     u8g2.drawGlyph(vars.dcursor_x, vars.dcursor_y, CURSOR_CHAR);
     vars.dcursor_x += LETTER_W;
     break;
@@ -154,12 +155,12 @@ void updateDialog() {
   }
 
   if (vars.dcursor == DLINE_LEN) {
-    if (DOWN(A) || DOWN(DRIGHT)) {
+    if (BTN(A) || BTN(RIGHT)) {
       vars.dline_i++;
       goto clear;
     }
 
-    if (DOWN(DLEFT) && vars.dline_i > 0 && devents[vars.dline_i-1].choice == NO_CHOICE) {
+    if (BTN(LEFT) && vars.dline_i > 0 && devents[vars.dline_i-1].choice == NO_CHOICE) {
       vars.dline_i--;
       goto clear;
     }
@@ -203,12 +204,12 @@ void drawChoice() {
 }
 
 void updateChoice() {
-  if (DOWN(DLEFT) || DOWN(DRIGHT)) {
+  if (BTN(LEFT) || BTN(RIGHT)) {
     vars.selected = !vars.selected;
     PLAY_SOUND(BUZZER_1, CHOICE_SOUND, CHOICE_MS, CHOICE_PAUSE);
   }
 
-  if (DOWN(A)) {
+  if (BTN(A)) {
     vars.points += devents[vars.dline_i].choice->points[vars.selected];
     vars.mode = DIALOG;
 
@@ -225,8 +226,8 @@ void updateChoice() {
 
 void setup() {
   pinMode(A, INPUT);
-  pinMode(DLEFT, INPUT);
-  pinMode(DRIGHT, INPUT);
+  pinMode(LEFT, INPUT);
+  pinMode(RIGHT, INPUT);
   
   u8g2.begin();
   u8g2.setContrast(0);

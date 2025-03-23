@@ -7,7 +7,7 @@
 - 1x Arduino Uno R3
 - 1x Display OLED SH1106 I2C
 - 1x Buzzer (pino 6)
-- 3x Botão Tátil (pinos 2, 3 e 4)
+- 3x Botão Tátil (pinos 4, 5 e 6)
 
 O Arduinovel foi testado apenas em um Arduino Uno R3, mas
 deve funcionar com um Uno R4 também. Se necessário, troque
