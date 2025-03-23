@@ -19,7 +19,7 @@
 // Som
 #define BUZZER_1 6
 
-#define MAY_VOICE 440 * 4 + (rand() % 76)
+#define MAY_VOICE 440 * 4 + (rand() % 76 /* número da sorte*/)
 #define MAY_VOICE_MS 10
 #define MAY_VOICE_PAUSE 2
 
@@ -64,10 +64,11 @@ struct {
   uint8_t dcursor    : 6  ;
   uint8_t dcursor_x  : 7  ;
   uint8_t dcursor_y  : 6  ;
-  uint8_t dline_i    : 16 ;
+  uint8_t dline_i    : 10 ;
   uint8_t selected   : 1  ;
+  int8_t points      : 6  ;
   Mode    mode       : 3  ;
-} vars = {1, 0, LINE_START_X, LINE_START_Y, 0, 0, STARTPAGE};
+} vars = {1, 0, LINE_START_X, LINE_START_Y, 0, 0, 0,   STARTPAGE};
 
 void drawStart() {
   u8g2.setDrawColor(0);
@@ -119,6 +120,11 @@ void handleEvents() {
 }
 
 void drawDialog() {
+  // Debug
+  char buff[2];
+  sprintf(buff, "%d", vars.points);
+  u8g2.drawStr(0, LETTER_H, buff);
+
   // Draw
   switch (CURSOR_CHAR) {
   case '\n': // Line break
@@ -192,8 +198,8 @@ void drawChoice() {
 
   u8g2.setDrawColor(1);
 
-  u8g2.drawUTF8(CHOICE_X + LETTER_W * 2, CHOICE_ONE_Y, devents[vars.dline_i].choice->one);
-  u8g2.drawUTF8(CHOICE_X + LETTER_W * 2, CHOICE_TWO_Y, devents[vars.dline_i].choice->two);
+  u8g2.drawUTF8(CHOICE_X + LETTER_W * 2, CHOICE_ONE_Y, devents[vars.dline_i].choice->strings[0]);
+  u8g2.drawUTF8(CHOICE_X + LETTER_W * 2, CHOICE_TWO_Y, devents[vars.dline_i].choice->strings[1]);
 }
 
 void updateChoice() {
@@ -203,6 +209,7 @@ void updateChoice() {
   }
 
   if (DOWN(A)) {
+    vars.points += devents[vars.dline_i].choice->points[vars.selected];
     vars.mode = DIALOG;
 
     vars.dline_i++;

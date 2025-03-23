@@ -4,8 +4,8 @@
 // Futuramente colocar na progmem
 
 struct Choice {
-    const char one[16];
-    const char two[16];
+    const char strings [2][16];
+    int8_t points[2];
 };
 
 #define NO_CHOICE NULL
