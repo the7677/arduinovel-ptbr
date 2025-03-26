@@ -11,7 +11,7 @@
 #include "sprites.h"
 
 // Controles
-#define BTN(PIN) digitalRead(PIN)
+#define BTN(PIN) !digitalRead(PIN)
 #define UP    2
 #define DOWN  3
 #define LEFT  4
@@ -225,10 +225,13 @@ void updateChoice() {
 }
 
 void setup() {
-  pinMode(A, INPUT);
-  pinMode(LEFT, INPUT);
-  pinMode(RIGHT, INPUT);
-  
+  pinMode(UP, INPUT_PULLUP);
+  pinMode(DOWN, INPUT_PULLUP);
+  pinMode(LEFT, INPUT_PULLUP);
+  pinMode(RIGHT, INPUT_PULLUP);
+  pinMode(A, INPUT_PULLUP);
+  pinMode(B, INPUT_PULLUP);
+
   u8g2.begin();
   u8g2.setContrast(0);
   u8g2.setFont(FONT_1);
